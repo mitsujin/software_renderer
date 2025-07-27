@@ -1,58 +1,65 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 
-int main(int argc, char* argv[]) {
+// Function to create and initialize SDL window and renderer
+bool createWindow(SDL_Window** window, SDL_Renderer** renderer, const char* title, int width, int height) {
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
-        return 1;
+        return false;
     }
 
     // Create window
-    SDL_Window* window = SDL_CreateWindow(
-        "SoftRenderer - Hello World",
+    *window = SDL_CreateWindow(
+        title,
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        800,
-        600,
+        width,
+        height,
         SDL_WINDOW_SHOWN
     );
 
-    if (!window) {
+    if (!*window) {
         std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-        return 1;
+        return false;
     }
 
     // Create renderer
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (!renderer) {
+    *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED);
+    if (!*renderer) {
         std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+        SDL_DestroyWindow(*window);
+        return false;
+    }
+
+    return true;
+}
+
+bool g_quit = false;
+
+void processInput();
+void update();
+void render(SDL_Renderer* renderer);
+
+int main(int argc, char* argv[]) {
+    SDL_Window* window = nullptr;
+    SDL_Renderer* renderer = nullptr;
+
+    // Create window and renderer
+    if (!createWindow(&window, &renderer, "SoftRenderer - Hello World", 800, 600)) {
         return 1;
     }
 
     // Main loop
-    bool quit = false;
+    g_quit = false;
     SDL_Event event;
 
-    while (!quit) {
-        // Handle events
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                quit = true;
-            }
-        }
+    while (!g_quit) {
 
-        // Clear screen
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
+        processInput();
+        update();
+        render(renderer);
 
-        // Draw a simple rectangle
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_Rect rect = {350, 250, 100, 100};
-        SDL_RenderFillRect(renderer, &rect);
-
-        // Update screen
-        SDL_RenderPresent(renderer);
     }
 
     // Cleanup
@@ -63,3 +70,42 @@ int main(int argc, char* argv[]) {
     std::cout << "SoftRenderer Hello World completed successfully!" << std::endl;
     return 0;
 } 
+
+void processInput() {
+
+    SDL_Event event;
+
+    while (SDL_PollEvent(&event)) {
+
+        switch (event.type) {
+            case SDL_QUIT:
+                g_quit = true;
+                break;
+            case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    g_quit = true;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void update() {
+
+}
+
+void render(SDL_Renderer* renderer) {
+    // Clear screen
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    // Draw a simple rectangle
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_Rect rect = {350, 250, 100, 100};
+    SDL_RenderFillRect(renderer, &rect);
+
+    // Update screen
+    SDL_RenderPresent(renderer);
+}

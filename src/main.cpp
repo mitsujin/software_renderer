@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
+#include <memory>
+#include "Renderer.h"
 
 // Function to create and initialize SDL window and renderer
 bool createWindow(SDL_Window** window, SDL_Renderer** renderer, const char* title, int width, int height) {
@@ -36,10 +38,11 @@ bool createWindow(SDL_Window** window, SDL_Renderer** renderer, const char* titl
 }
 
 bool g_quit = false;
+std::unique_ptr<Renderer> g_renderer;
 
 void processInput();
 void update();
-void render(SDL_Renderer* renderer);
+void render();
 
 int main(int argc, char* argv[]) {
     SDL_Window* window = nullptr;
@@ -50,6 +53,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // Create our software renderer
+    g_renderer = std::make_unique<Renderer>(800, 600, renderer);
+
     // Main loop
     g_quit = false;
     SDL_Event event;
@@ -58,7 +64,7 @@ int main(int argc, char* argv[]) {
 
         processInput();
         update();
-        render(renderer);
+        render();
 
     }
 
@@ -69,7 +75,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << "SoftRenderer Hello World completed successfully!" << std::endl;
     return 0;
-} 
+}
 
 void processInput() {
 
@@ -96,16 +102,24 @@ void update() {
 
 }
 
-void render(SDL_Renderer* renderer) {
-    // Clear screen
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
+void render() {
 
-    // Draw a simple rectangle
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_Rect rect = {350, 250, 100, 100};
-    SDL_RenderFillRect(renderer, &rect);
-
-    // Update screen
-    SDL_RenderPresent(renderer);
+    // Clear our buffer with dark blue
+    g_renderer->clear(Renderer::createColor(255, 0, 50));
+    
+    // Draw a white rectangle
+    uint32_t white = Renderer::createColor(255, 255, 255);
+    g_renderer->drawRect(350, 250, 100, 100, white);
+    
+    // Draw some lines
+    uint32_t red = Renderer::createColor(255, 0, 0);
+    uint32_t green = Renderer::createColor(0, 255, 0);
+    uint32_t blue = Renderer::createColor(0, 0, 255);
+    
+    g_renderer->drawLine(100, 100, 200, 200, red);
+    g_renderer->drawLine(200, 100, 300, 200, green);
+    g_renderer->drawLine(300, 100, 400, 200, blue);
+    
+    // Present our buffer to the screen
+    g_renderer->present();
 }

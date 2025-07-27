@@ -12,7 +12,10 @@ find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
 # Add executable
-add_executable(softrenderer src/main.cpp)
+add_executable(softrenderer 
+    src/main.cpp
+    src/Renderer.cpp
+)
 
 # Link libraries
 target_link_libraries(softrenderer ${SDL2_LIBRARIES})

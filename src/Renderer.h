@@ -17,11 +17,12 @@ public:
     // Drawing functions
     void drawRect(int x, int y, int width, int height, uint32_t color);
     void drawLine(int x1, int y1, int x2, int y2, uint32_t color);
+    void drawGrid(int spacing, uint32_t color);
     
     // Buffer operations
     void present();
     void resize(int width, int height);
-    
+
     // Getters
     int getWidth() const { return m_width; }
     int getHeight() const { return m_height; }

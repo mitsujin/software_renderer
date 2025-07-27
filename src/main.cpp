@@ -112,20 +112,10 @@ void update() {
 void render() {
 
     // Clear our buffer with dark blue
-    g_renderer->clear(Renderer::createColor(255, 0, 50));
+    g_renderer->clear(Renderer::createColor(0, 0, 0));
     
-    // Draw a white rectangle
-    uint32_t white = Renderer::createColor(255, 255, 255);
-    g_renderer->drawRect(350, 250, 100, 100, white);
-    
-    // Draw some lines
-    uint32_t red = Renderer::createColor(255, 0, 0);
-    uint32_t green = Renderer::createColor(0, 255, 0);
-    uint32_t blue = Renderer::createColor(0, 0, 255);
-    
-    g_renderer->drawLine(100, 100, 200, 200, red);
-    g_renderer->drawLine(200, 100, 300, 200, green);
-    g_renderer->drawLine(300, 100, 400, 200, blue);
+    g_renderer->drawGrid(10, 0xFF333333);
+    g_renderer->drawRect(100, 100, 300, 200, 0xFFFFFFFF);
     
     // Present our buffer to the screen
     g_renderer->present();

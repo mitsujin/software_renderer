@@ -48,6 +48,16 @@ void Renderer::drawRect(int x, int y, int width, int height, uint32_t color) {
     }
 }
 
+void Renderer::drawGrid(int spacing, uint32_t color) {
+    for (int i = 0; i < m_width; i++) {
+        for (int j = 0; j < m_height; j++) {
+            if (i % spacing == 0 || j % spacing == 0) {
+                setPixel(i, j, color);
+            }
+        }
+    }
+}
+
 void Renderer::drawLine(int x1, int y1, int x2, int y2, uint32_t color) {
     // Bresenham's line algorithm
     int dx = abs(x2 - x1);

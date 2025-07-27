@@ -6,19 +6,14 @@
 // Function to create and initialize SDL window and renderer
 bool createWindow(SDL_Window** window, SDL_Renderer** renderer, const char* title, int width, int height) {
     // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
-        return false;
-    }
-
     // Create window
     *window = SDL_CreateWindow(
         title,
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
         width,
         height,
-        SDL_WINDOW_SHOWN
+        SDL_WINDOW_BORDERLESS
     );
 
     if (!*window) {
@@ -34,6 +29,8 @@ bool createWindow(SDL_Window** window, SDL_Renderer** renderer, const char* titl
         return false;
     }
 
+    SDL_SetWindowFullscreen(*window, SDL_WINDOW_FULLSCREEN);
+
     return true;
 }
 
@@ -48,13 +45,23 @@ int main(int argc, char* argv[]) {
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
 
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+        return false;
+    }
+
+    SDL_DisplayMode displayMode;
+    SDL_GetCurrentDisplayMode(0, &displayMode);
+    int width = displayMode.w;
+    int height = displayMode.h;
+
     // Create window and renderer
-    if (!createWindow(&window, &renderer, "SoftRenderer - Hello World", 800, 600)) {
+    if (!createWindow(&window, &renderer, "SoftRenderer - Hello World", width, height)) {
         return 1;
     }
 
     // Create our software renderer
-    g_renderer = std::make_unique<Renderer>(800, 600, renderer);
+    g_renderer = std::make_unique<Renderer>(width, height, renderer);
 
     // Main loop
     g_quit = false;

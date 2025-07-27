@@ -15,6 +15,7 @@ include_directories(${SDL2_INCLUDE_DIRS})
 add_executable(softrenderer 
     src/main.cpp
     src/Renderer.cpp
+    src/Display.cpp
 )
 
 # Link libraries
